@@ -3,7 +3,7 @@ from __future__ import annotations
 from fastapi import FastAPI, HTTPException, Query
 
 from .schemas import Task, TaskCreate, TaskStatus
-from .service import complete_task, create_task, get_task, list_tasks
+from .service import complete_task, create_task, delete_task, get_task, list_tasks
 
 
 app = FastAPI(
@@ -49,3 +49,10 @@ def complete_existing_task(task_id: int) -> Task:
     if task is None:
         raise HTTPException(status_code=404, detail="Task not found")
     return task
+
+
+@app.delete("/tasks/{task_id}", status_code=204)
+def delete_existing_task(task_id: int) -> None:
+    deleted = delete_task(task_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="Task not found")
